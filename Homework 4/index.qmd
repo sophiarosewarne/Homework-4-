@@ -1,0 +1,99 @@
+---
+title: "Homework 4"
+author: "Sophia Rosewarne"
+---
+
+```{r}
+library(RedditExtractoR)
+library(tidyverse)
+library(jsonlite)
+library(rjson)
+library(tidytext)
+
+```
+
+## 1. R/shoestring Analysis
+
+```{r}
+
+##urls1 <- find_thread_urls(subreddit = "shoestring", sort_by = "top")
+##str(urls1)
+```
+
+```{r}
+##write_rds(urls1, "urls.rds") 
+urls <- read_rds("urls.rds")
+```
+
+```{r}
+tidytext <- data.frame(urls |>
+  unnest_tokens(word, text))
+
+```
+
+```{r}
+data(stop_words)
+
+tidytext <- tidytext |>
+  anti_join(stop_words)
+
+```
+
+```{r output = FALSE}
+tidytext |>
+  count(word, sort = TRUE)
+```
+
+```{r}
+library(wordcloud)
+```
+
+```{r}
+freqtext <- tidytext |>
+  count(word, sort = TRUE)
+set.seed(1234)
+wordcloud(words = tidytext$word, freq = freqtext$n, min.freq = 1, max.words = 200, random.order = FALSE)
+```
+
+## 2. Reddit User Analysis
+
+```{r}
+user <- "nationalgeographic"
+##natgeo1 <- get_user_content(user)
+##str(natgeo1[[user]]$about)
+
+```
+
+```{r}
+##write_rds(natgeo1, "natgeo.rds")
+natgeo <-read_rds("natgeo.rds")
+```
+
+```{r}
+comments<- (natgeo[[user]]$comments)
+
+```
+
+```{r}
+tidycomments <- comments |>
+  unnest_tokens(word, comment)
+
+```
+
+```{r}
+tidycomments <- tidycomments |>
+  anti_join(stop_words)
+
+```
+
+```{r output = FALSE}
+tidycomments |>
+  count(word, sort = TRUE)
+```
+
+```{r}
+freqcomments <- tidycomments |>
+  count(word, sort = TRUE)
+set.seed(1234)
+wordcloud(words = tidycomments$word, freq = freqcomments$n, min.freq = 1, max.words = 200, random.order = FALSE)
+```
